@@ -1,0 +1,6 @@
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 5L, '2022-03-01 16:14:54.293364')
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 1L, '2022-03-02 16:14:54.293364')
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 5051L, '2022-03-05 16:14:54.293364')
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 1L, '2022-03-04 16:14:54.293364')
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 1L, '2022-03-05 16:14:54.293364')
+insert into tb_energia ( leitura_Inicial, leitura_Final, total, data) values ( 0L, 5L, 2L, '2022-03-06 16:14:54.293364')
