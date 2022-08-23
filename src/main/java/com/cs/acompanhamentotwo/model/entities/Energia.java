@@ -1,18 +1,18 @@
 package com.cs.acompanhamentotwo.model.entities;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "tb_energia")
-public class Energia implements Serializable {
+public class Energia  {
 
     @Id
     @EqualsAndHashCode.Include
@@ -23,7 +23,7 @@ public class Energia implements Serializable {
 
     private Long leituraFinal;
 
-    private long total;
+    private Long total;
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant data;
