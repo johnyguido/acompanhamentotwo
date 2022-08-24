@@ -3,6 +3,7 @@ package com.cs.acompanhamentotwo.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Entity
@@ -18,14 +19,15 @@ public class Energia  {
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long leituraInicial;
-
     private Long leituraFinal;
-
     private Long total;
-
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant data;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Usuario usuario;
 
 }
