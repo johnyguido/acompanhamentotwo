@@ -11,11 +11,9 @@ import java.time.Instant;
 @Mapper(componentModel = "spring", nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL)
 public interface EnergiaMapper {
 
-    EnergiaRequestDTO mapEnergiaRequestDtoToEnergia(Energia source);
+    EnergiaRequestDTO mapEnergiaEntityToEnergiaRequestDto(Energia source);
     
     EnergiaResponseDTO mapEnergiaResponseDtoToEnergia(Energia source);
-
-    Energia mapEnergiaRequestToEnergiaEntity(EnergiaRequestDTO source);
 
     default Energia mapEntidadeParaSalvar(EnergiaRequestDTO source, Long medicaoAnterior, Long total) {
         Energia medicaoParaSalvar = Energia.builder()

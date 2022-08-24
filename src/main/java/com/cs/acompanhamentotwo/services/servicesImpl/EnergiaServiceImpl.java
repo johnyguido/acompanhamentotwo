@@ -47,12 +47,9 @@ public class EnergiaServiceImpl implements EnergiaService {
 		}  
 
 		log.info("Salvando a medicao...");
-
-
-
 		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, medicaoAnterior, total));
 
-		return energiaMapper.mapEnergiaRequestDtoToEnergia(energia);
+		return energiaMapper.mapEnergiaEntityToEnergiaRequestDto(energia);
 	}
 
 	private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
