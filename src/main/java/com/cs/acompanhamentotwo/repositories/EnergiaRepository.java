@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EnergiaRepository extends JpaRepository<Energia, Long> {
+
+	Energia findFirstByOrderByDataDesc();
 }

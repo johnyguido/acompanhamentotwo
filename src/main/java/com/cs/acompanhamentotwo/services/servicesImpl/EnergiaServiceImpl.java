@@ -1,4 +1,4 @@
-package com.cs.acompanhamentotwo.services.servicesIMPL;
+package com.cs.acompanhamentotwo.services.servicesImpl;
 
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,6 @@ public class EnergiaServiceImpl implements EnergiaService {
 
     	log.info("Listando todas as medicoes...");
         List<Energia> medicoes = energiaRepository.findAll();
-
         return medicoes.stream()
                 .map(energiaMapper::mapEnergiaResponseDtoToEnergia)
                 .sorted((o1, o2) -> o2.getData().compareTo(o1.getData()) )
@@ -41,19 +39,35 @@ public class EnergiaServiceImpl implements EnergiaService {
 	@Transactional
 	public EnergiaRequestDTO gravarLeitura(EnergiaRequestDTO dto) {
 
-		Energia energia = new Energia();
-		energia.setData(Instant.now());
-		energia.setLeituraInicial(null);;
-		energia.setTotal(obterTotal(dto.getLeituraFinal()));
-		energia.setLeituraFinal(dto.getLeituraFinal());
-		
-		energia = energiaRepository.save(energia);
-		
+		Long medicaoAnterior = buscarMedicaoAnterior();
+		Long total = obterTotal(medicaoAnterior, dto);
+
+		if (medicaoInvalida(medicaoAnterior, dto)) {
+			throw new RuntimeException("Medicao invalida");
+		}  
+
+		log.info("Salvando a medicao...");
+
+
+
+		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, medicaoAnterior, total));
+
 		return energiaMapper.mapEnergiaRequestDtoToEnergia(energia);
 	}
 
-	private Long obterTotal(Long leituraFinal) {
-		// TODO Buscar a ultima medicao e somar com a atual
-		return null;
+	private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
+		return dto.getLeituraFinal() - medicaoAnterior;
+	}
+
+	private boolean medicaoInvalida(Long medicaoAnterior, EnergiaRequestDTO dto) {
+		if (dto.getLeituraFinal() < medicaoAnterior) {
+			return true;
+		}
+		return false;
+	}
+	private Long buscarMedicaoAnterior() {
+		log.info("Buscando a medicao anterior...");
+		Energia energia = energiaRepository.findFirstByOrderByDataDesc();
+		return energia.getLeituraFinal();
 	}
 }
