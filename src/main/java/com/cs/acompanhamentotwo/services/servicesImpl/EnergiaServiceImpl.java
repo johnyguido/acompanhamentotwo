@@ -2,11 +2,11 @@ package com.cs.acompanhamentotwo.services.servicesImpl;
 
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
-import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.entities.Energia;
 import com.cs.acompanhamentotwo.repositories.EnergiaRepository;
 import com.cs.acompanhamentotwo.services.EnergiaService;
+import com.cs.acompanhamentotwo.services.exceptions.MedicaoNaoRealizadaException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class EnergiaServiceImpl implements EnergiaService {
 		Long total = obterTotal(medicaoAnterior, dto);
 
 		if (medicaoInvalida(medicaoAnterior, dto)) {
-			throw new RuntimeException("Medicao invalida");
+			throw new MedicaoNaoRealizadaException("Medicao invalida");
 		}  
 
 		log.info("Salvando a medicao...");

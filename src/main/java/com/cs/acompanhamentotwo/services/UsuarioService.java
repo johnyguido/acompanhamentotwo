@@ -8,4 +8,6 @@ public interface UsuarioService {
 
     Page<UsuarioDTO> findAllPaged(Pageable pageable) ;
 
+    UsuarioDTO findById(Long id) ;
+
 }
