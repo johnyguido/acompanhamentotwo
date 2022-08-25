@@ -11,13 +11,13 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EnergiaResponseDTO  {
+public class EnergiaSimplesResponseDTO {
 
     private Long leituraInicial;
     private Long leituraFinal;
     private Long total;
     private Instant data;
 
-    private UsuarioDTO usuario;
+    private UsuarioSimplesDTO usuario;
 
 }

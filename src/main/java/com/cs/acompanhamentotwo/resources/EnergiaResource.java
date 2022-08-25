@@ -2,6 +2,7 @@ package com.cs.acompanhamentotwo.resources;
 
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.services.EnergiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class EnergiaResource {
     private final EnergiaService energiaService;
 
     @GetMapping
-    public ResponseEntity<List<EnergiaResponseDTO>> findAll() {
+    public ResponseEntity<List<EnergiaSimplesResponseDTO>> findAll() {
         return ResponseEntity.ok().body(energiaService.listarTodasMedicoes());
     }
     

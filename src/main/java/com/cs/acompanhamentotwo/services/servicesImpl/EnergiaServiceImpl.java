@@ -3,6 +3,7 @@ package com.cs.acompanhamentotwo.services.servicesImpl;
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.entities.Energia;
 import com.cs.acompanhamentotwo.repositories.EnergiaRepository;
 import com.cs.acompanhamentotwo.services.EnergiaService;
@@ -25,7 +26,7 @@ public class EnergiaServiceImpl implements EnergiaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EnergiaResponseDTO> listarTodasMedicoes() {
+    public List<EnergiaSimplesResponseDTO> listarTodasMedicoes() {
 
     	log.info("Listando todas as medicoes...");
         List<Energia> medicoes = energiaRepository.findAll();
