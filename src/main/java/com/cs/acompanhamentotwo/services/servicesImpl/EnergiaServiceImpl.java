@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -44,23 +45,29 @@ public class EnergiaServiceImpl implements EnergiaService {
 	@Transactional
 	public EnergiaRequestDTO gravarLeitura(EnergiaRequestDTO dto) {
 
+		validaMedicao(dto);
+
+		log.info("Salvando a medicao...");
+		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, buscarMedicaoAnterior(), validaMedicao(dto)));
+
+		return energiaMapper.mapEnergiaEntityToEnergiaRequestDto(energia);
+	}
+
+	private Long validaMedicao(EnergiaRequestDTO dto) {
+
 		Long medicaoAnterior = buscarMedicaoAnterior();
 		Long total = obterTotal(medicaoAnterior, dto);
 
 		if (medicaoInvalida(medicaoAnterior, dto)) {
 			throw new MedicaoNaoRealizadaException("Medicao invalida");
-		}  
-
-		log.info("Salvando a medicao...");
-		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, medicaoAnterior, total));
-
-		return energiaMapper.mapEnergiaEntityToEnergiaRequestDto(energia);
+		}else return total;
 	}
 
 	/**
 	 * @return
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<EnergiaSomaDTO> somaMensal() {
 
 		List<Energia> medicoes = energiaRepository.findAll();
@@ -73,11 +80,11 @@ public class EnergiaServiceImpl implements EnergiaService {
 	}
 
 	private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
-		return dto.getLeituraFinal() - medicaoAnterior;
+		return ObjectUtils.nullSafeHashCode(dto.getLeituraFinal())  - medicaoAnterior;
 	}
 
 	private boolean medicaoInvalida(Long medicaoAnterior, EnergiaRequestDTO dto) {
-		if (dto.getLeituraFinal() < medicaoAnterior) {
+		if (ObjectUtils.isEmpty(dto.getLeituraFinal()) || dto.getLeituraFinal() < medicaoAnterior) {
 			return true;
 		}
 		return false;

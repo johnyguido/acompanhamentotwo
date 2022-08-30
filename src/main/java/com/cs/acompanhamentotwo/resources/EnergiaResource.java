@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class EnergiaResource {
     }
     
     @PostMapping
-	public ResponseEntity<EnergiaRequestDTO> insert(@RequestBody EnergiaRequestDTO dto) {
+	public ResponseEntity<EnergiaRequestDTO> insert(@RequestBody @Valid EnergiaRequestDTO dto) {
     	EnergiaRequestDTO requestDTO = energiaService.gravarLeitura(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getLeituraFinal()).toUri();
 		return ResponseEntity.created(uri).body(requestDTO);
