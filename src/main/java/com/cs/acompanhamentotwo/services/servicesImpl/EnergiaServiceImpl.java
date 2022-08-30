@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,14 +70,21 @@ public class EnergiaServiceImpl implements EnergiaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<EnergiaSomaDTO> somaMensal() {
-
 		List<Energia> medicoes = energiaRepository.findAll();
 
 	List<Long> soma = Collections.singletonList(medicoes.stream()
-			.filter(energia -> energia.getData().isAfter(Instant.now().minus(30, ChronoUnit.DAYS)) )
+			.filter(energia ->  mesAtual(energia.getData()) )
 			.collect(Collectors.summingLong(Energia::getTotal)));
 
 		return soma.stream().map(EnergiaSomaDTO::new).collect(Collectors.toList());
+	}
+
+	private boolean mesAtual(Instant data) {
+		int mesAtual = Instant.now().atOffset(ZoneOffset.UTC).getMonth().getValue();
+		int mesDaLeitura = data.atZone(ZoneId.systemDefault()).getMonthValue();
+		if (mesDaLeitura >= mesAtual){
+			return Boolean.TRUE;
+		}else return Boolean.FALSE;
 	}
 
 	private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
@@ -85,9 +93,9 @@ public class EnergiaServiceImpl implements EnergiaService {
 
 	private boolean medicaoInvalida(Long medicaoAnterior, EnergiaRequestDTO dto) {
 		if (ObjectUtils.isEmpty(dto.getLeituraFinal()) || dto.getLeituraFinal() < medicaoAnterior) {
-			return true;
+			return Boolean.TRUE;
 		}
-		return false;
+		return Boolean.FALSE;
 	}
 	private Long buscarMedicaoAnterior() {
 		log.info("Buscando a medicao anterior...");
