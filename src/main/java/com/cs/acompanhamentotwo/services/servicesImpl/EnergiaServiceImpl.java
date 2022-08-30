@@ -3,6 +3,7 @@ package com.cs.acompanhamentotwo.services.servicesImpl;
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaSomaDTO;
 import com.cs.acompanhamentotwo.model.entities.Energia;
 import com.cs.acompanhamentotwo.repositories.EnergiaRepository;
 import com.cs.acompanhamentotwo.services.EnergiaService;
@@ -12,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +55,21 @@ public class EnergiaServiceImpl implements EnergiaService {
 		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, medicaoAnterior, total));
 
 		return energiaMapper.mapEnergiaEntityToEnergiaRequestDto(energia);
+	}
+
+	/**
+	 * @return
+	 */
+	@Override
+	public List<EnergiaSomaDTO> somaMensal() {
+
+		List<Energia> medicoes = energiaRepository.findAll();
+
+	List<Long> soma = Collections.singletonList(medicoes.stream()
+			.filter(energia -> energia.getData().isAfter(Instant.now().minus(30, ChronoUnit.DAYS)) )
+			.collect(Collectors.summingLong(Energia::getTotal)));
+
+		return soma.stream().map(EnergiaSomaDTO::new).collect(Collectors.toList());
 	}
 
 	private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
