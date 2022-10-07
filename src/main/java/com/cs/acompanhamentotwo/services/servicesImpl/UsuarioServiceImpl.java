@@ -49,6 +49,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
     @Override
     public Usuario findByEmail(String email) {
+        log.info("Buscando usuario de email: {}", email);
         return usuarioRepository.findByEmail(email);
     }
 
