@@ -1,6 +1,7 @@
 package com.cs.acompanhamentotwo.mapper;
 
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.entities.Energia;
 import com.cs.acompanhamentotwo.model.entities.Usuario;
@@ -16,7 +17,9 @@ public interface EnergiaMapper {
     
     EnergiaSimplesResponseDTO mapEnergiaResponseDtoToEnergia(Energia source);
 
-    default Energia mapEntidadeParaSalvar(EnergiaRequestDTO source, Long medicaoAnterior, Long total) {
+    EnergiaResponseDTO mapEnergiaToEnergiaResponseDto(Energia source);
+
+    default Energia mapEntidadeParaSalvar(EnergiaRequestDTO source, Long medicaoAnterior, Long total, Usuario usuario) {
         Energia medicaoParaSalvar = Energia.builder()
                 .leituraFinal(source.getLeituraFinal())
                 .data(Instant.now())
@@ -24,7 +27,7 @@ public interface EnergiaMapper {
                 .total(total)
                 .leituraFinal(source.getLeituraFinal())
                 //TODO: Refatorar para incluir id do usuario Logado sem Mock
-                .usuario(Usuario.builder().id(1L).build())
+                .usuario(usuario)
                 .build();
         return medicaoParaSalvar;
     }

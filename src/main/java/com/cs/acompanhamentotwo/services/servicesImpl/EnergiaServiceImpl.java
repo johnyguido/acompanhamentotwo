@@ -2,14 +2,19 @@ package com.cs.acompanhamentotwo.services.servicesImpl;
 
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSomaDTO;
 import com.cs.acompanhamentotwo.model.entities.Energia;
+import com.cs.acompanhamentotwo.model.entities.Usuario;
 import com.cs.acompanhamentotwo.repositories.EnergiaRepository;
 import com.cs.acompanhamentotwo.services.EnergiaService;
+import com.cs.acompanhamentotwo.services.UsuarioService;
 import com.cs.acompanhamentotwo.services.exceptions.MedicaoNaoRealizadaException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -19,7 +24,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,6 +32,8 @@ import java.util.stream.Collectors;
 public class EnergiaServiceImpl implements EnergiaService {
 
     private final EnergiaRepository energiaRepository;
+
+	private final UsuarioService usuarioService;
 
     private final EnergiaMapper energiaMapper;
 
@@ -45,14 +51,16 @@ public class EnergiaServiceImpl implements EnergiaService {
 
 	@Override
 	@Transactional
-	public EnergiaRequestDTO gravarLeitura(EnergiaRequestDTO dto) {
+	public EnergiaResponseDTO gravarLeitura(EnergiaRequestDTO dto) {
 
 		validaMedicao(dto);
 
-		log.info("Salvando a medicao...");
-		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, buscarMedicaoAnterior(), validaMedicao(dto)));
+		Usuario usuarioAutenticado = usuarioService. findByEmail(obterUsuarioLogado().getName());
 
-		return energiaMapper.mapEnergiaEntityToEnergiaRequestDto(energia);
+		log.info("Salvando a medicao...");
+		Energia energia = energiaRepository.save(energiaMapper.mapEntidadeParaSalvar(dto, buscarMedicaoAnterior(), validaMedicao(dto), usuarioAutenticado));
+
+		return energiaMapper.mapEnergiaToEnergiaResponseDto(energia);
 	}
 
 	private Long validaMedicao(EnergiaRequestDTO dto) {
@@ -80,6 +88,14 @@ public class EnergiaServiceImpl implements EnergiaService {
 		return soma.stream().map(EnergiaSomaDTO::new).collect(Collectors.toList());
 	}
 
+	@Override
+	public List<EnergiaSimplesResponseDTO> buscarTodasMedicoesPorUsuarioLogado() {
+		return energiaRepository.findAllByUsuarioId(obterIdUsuarioAutenticado())
+				.stream()
+				.map(energiaMapper::mapEnergiaResponseDtoToEnergia)
+				.collect(Collectors.toList());
+	}
+
 	private boolean mesAtual(Instant data) {
 		int mesAtual = Instant.now().atOffset(ZoneOffset.UTC).getMonth().getValue();
 		int mesDaLeitura = data.atZone(ZoneId.systemDefault()).getMonthValue();
@@ -105,4 +121,24 @@ public class EnergiaServiceImpl implements EnergiaService {
 				.orElseThrow(() -> new MedicaoNaoRealizadaException("Medição invalida"))
 				.longValue();
 	}
+
+	private Authentication obterUsuarioLogado() {
+		Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+		return autenticacao;
+	}
+
+	private Usuario obterUsuarioAutenticado() {
+		Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario usuarioAutenticado = usuarioService.findByEmail(autenticacao.getName());
+		return usuarioAutenticado;
+	}
+
+	private Long obterIdUsuarioAutenticado() {
+		Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario usuarioAutenticado = usuarioService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+		return usuarioAutenticado.getId();
+	}
+
 }

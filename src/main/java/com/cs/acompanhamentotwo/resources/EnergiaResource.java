@@ -1,6 +1,7 @@
 package com.cs.acompanhamentotwo.resources;
 
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
+import com.cs.acompanhamentotwo.model.dto.EnergiaResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSomaDTO;
 import com.cs.acompanhamentotwo.services.EnergiaService;
@@ -25,6 +26,11 @@ public class EnergiaResource {
         return ResponseEntity.ok().body(energiaService.listarTodasMedicoes());
     }
 
+    @GetMapping(value = "/porusuario")
+    public ResponseEntity<List<EnergiaSimplesResponseDTO>> buscarTodasMedicoesPorUsuarioLogado() {
+        return ResponseEntity.ok().body(energiaService.buscarTodasMedicoesPorUsuarioLogado());
+    }
+
     @GetMapping(value = "/mensal")
     public ResponseEntity<List<EnergiaSomaDTO>> somaMensal() {
 
@@ -34,10 +40,10 @@ public class EnergiaResource {
     }
     
     @PostMapping
-	public ResponseEntity<EnergiaRequestDTO> insert(@RequestBody @Valid EnergiaRequestDTO dto) {
-    	EnergiaRequestDTO requestDTO = energiaService.gravarLeitura(dto);
+	public ResponseEntity<EnergiaResponseDTO> insert(@RequestBody @Valid EnergiaRequestDTO dto) {
+        EnergiaResponseDTO energiaResponseDTO = energiaService.gravarLeitura(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getLeituraFinal()).toUri();
-		return ResponseEntity.created(uri).body(requestDTO);
+		return ResponseEntity.created(uri).body(energiaResponseDTO);
 	}
 
 }
