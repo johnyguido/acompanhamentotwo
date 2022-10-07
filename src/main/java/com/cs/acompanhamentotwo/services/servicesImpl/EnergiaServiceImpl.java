@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -92,14 +93,16 @@ public class EnergiaServiceImpl implements EnergiaService {
 	}
 
 	private boolean medicaoInvalida(Long medicaoAnterior, EnergiaRequestDTO dto) {
-		if (ObjectUtils.isEmpty(dto.getLeituraFinal()) || dto.getLeituraFinal() < medicaoAnterior) {
+		if (ObjectUtils.isEmpty(dto.getLeituraFinal()) || dto.getLeituraFinal() <= medicaoAnterior) {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
 	}
 	private Long buscarMedicaoAnterior() {
 		log.info("Buscando a medicao anterior...");
-		Energia energia = energiaRepository.findFirstByOrderByDataDesc();
-		return energia.getLeituraFinal();
+		return energiaRepository.findFirstByOrderByDataDesc()
+				.map(Energia::getLeituraFinal)
+				.orElseThrow(() -> new MedicaoNaoRealizadaException("Medição invalida"))
+				.longValue();
 	}
 }
