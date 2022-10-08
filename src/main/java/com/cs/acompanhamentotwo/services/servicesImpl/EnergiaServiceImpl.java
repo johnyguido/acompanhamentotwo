@@ -69,7 +69,7 @@ public class EnergiaServiceImpl implements EnergiaService {
 		Long total = obterTotal(medicaoAnterior, dto);
 
 		if (medicaoInvalida(medicaoAnterior, dto)) {
-			throw new MedicaoNaoRealizadaException("Medicao inválida! A ultima medição foi " + medicaoAnterior);
+			throw new MedicaoNaoRealizadaException("Consumo anterior " + medicaoAnterior + " kWH.");
 		}else return total;
 	}
 
