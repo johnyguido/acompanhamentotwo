@@ -1,5 +1,5 @@
 insert into TB_USUARIO (CRIADO_EM,  EMAIL,  	LOGIN,  	NOME,  	SENHA,  	SOBRENOME ) values (NOW(),  'johnyguido@hotmail.com.br', 'joalencar', 'Johny','$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG', 'Alencar')
-    insert into TB_USUARIO (CRIADO_EM,  EMAIL,  	LOGIN,  	NOME,  	SENHA,  	SOBRENOME ) values (NOW(),  'michellegarcezc@gmail.com', 'migarcez', 'Michelle','$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG', 'Garcez')
+insert into TB_USUARIO (CRIADO_EM,  EMAIL,  	LOGIN,  	NOME,  	SENHA,  	SOBRENOME ) values (NOW(),  'michellegarcezc@gmail.com', 'migarcez', 'Michelle','$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG', 'Garcez')
 
 insert into tb_energia ( leitura_Inicial, leitura_Final, total, data, user_id) values ( 0L, 5L, 5L, '2022-03-01 16:14:54.293364', 1L)
 insert into tb_energia ( leitura_Inicial, leitura_Final, total, data, user_id) values ( 5L, 6L, 1L, '2022-03-02 16:14:54.293364', 1L)
