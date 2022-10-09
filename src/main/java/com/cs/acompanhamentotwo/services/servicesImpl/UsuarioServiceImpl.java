@@ -58,10 +58,10 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         Usuario usuario = usuarioRepository.findByEmail(username);
 
         if (usuario == null) {
-            logger.error("Usuario não encontrado " + username);
+            logger.error("Usuario " + username + " não encontrado.");
             throw new UsernameNotFoundException("E-mail inexistente");
         }
-        logger.info("Usuario autenticado " + username);
+        logger.info("Usuario encontrado: " + username);
         return usuario;
     }
 }

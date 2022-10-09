@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface EnergiaRepository extends JpaRepository<Energia, Long> {
 
-	Optional<Energia> findFirstByOrderByDataDesc();
+	Optional<Energia> findFirstByUsuarioIdOrderByDataDesc(Long id);
 
 	List<Energia> findAllByUsuarioId(Long id);
 }

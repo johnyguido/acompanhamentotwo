@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class EnergiaRequestDTO {
 
-    @NotNull
+    @NotNull(message = "Obrigatório inserir uma valor")
     private Long leituraFinal;
 
 }
