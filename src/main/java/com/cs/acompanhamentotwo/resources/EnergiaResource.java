@@ -6,6 +6,8 @@ import com.cs.acompanhamentotwo.model.dto.EnergiaSimplesResponseDTO;
 import com.cs.acompanhamentotwo.model.dto.EnergiaSomaDTO;
 import com.cs.acompanhamentotwo.services.EnergiaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,8 +24,9 @@ public class EnergiaResource {
     private final EnergiaService energiaService;
 
     @GetMapping
-    public ResponseEntity<List<EnergiaSimplesResponseDTO>> findAll() {
-        return ResponseEntity.ok().body(energiaService.listarTodasMedicoes());
+    public ResponseEntity<Page<EnergiaSimplesResponseDTO>> findAll(Pageable pageable) {
+        Page<EnergiaSimplesResponseDTO> list = energiaService.listarTodasMedicoes(pageable);
+        return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value = "/porusuario")

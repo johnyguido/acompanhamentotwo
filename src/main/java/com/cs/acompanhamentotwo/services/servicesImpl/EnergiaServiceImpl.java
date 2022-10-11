@@ -13,6 +13,8 @@ import com.cs.acompanhamentotwo.services.UsuarioService;
 import com.cs.acompanhamentotwo.services.exceptions.MedicaoNaoRealizadaException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,14 +42,11 @@ public class EnergiaServiceImpl implements EnergiaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EnergiaSimplesResponseDTO> listarTodasMedicoes() {
+    public Page<EnergiaSimplesResponseDTO> listarTodasMedicoes(Pageable pageable) {
 
         log.info("Listando todas as medicoes...");
-        List<Energia> medicoes = energiaRepository.findAll();
-        return medicoes.stream()
-                .map(energiaMapper::mapEnergiaResponseDtoToEnergia)
-                .sorted((o1, o2) -> o2.getData().compareTo(o1.getData()))
-                .collect(Collectors.toList());
+        Page<Energia> medicoes = energiaRepository.findAllByUsuarioId(pageable, obterIdUsuarioAutenticado());
+        return medicoes.map(energiaMapper::mapEnergiaResponseDtoToEnergia);
     }
 
     @Override

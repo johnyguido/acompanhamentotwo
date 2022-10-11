@@ -21,12 +21,12 @@ public interface EnergiaMapper {
 
     default Energia mapEntidadeParaSalvar(EnergiaRequestDTO source, Long medicaoAnterior, Long total, Usuario usuario) {
         Energia medicaoParaSalvar = Energia.builder()
+                .id(Energia.builder().build().getId())
                 .leituraFinal(source.getLeituraFinal())
                 .data(Instant.now())
                 .leituraInicial(medicaoAnterior)
                 .total(total)
                 .leituraFinal(source.getLeituraFinal())
-                //TODO: Refatorar para incluir id do usuario Logado sem Mock
                 .usuario(usuario)
                 .build();
         return medicaoParaSalvar;
