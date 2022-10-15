@@ -7,13 +7,16 @@ import com.cs.acompanhamentotwo.model.dto.EnergiaSomaDTO;
 import com.cs.acompanhamentotwo.services.EnergiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -22,6 +25,28 @@ import java.util.List;
 public class EnergiaResource {
 
     private final EnergiaService energiaService;
+
+    @GetMapping(value = "/paginadas")
+    public ResponseEntity<Page<EnergiaResponseDTO>> findAllPaginada(
+
+            @RequestParam(value = "min", defaultValue = "") String min,
+            @RequestParam(value = "max", defaultValue = "") String max,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
+            @RequestParam(value = "orderBy", defaultValue = "data") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
+
+        Instant minDate = ("".equals(min)) ? null : Instant.parse(min);
+        Instant maxDate = ("".equals(max)) ? null : Instant.parse(max);
+
+        if (linesPerPage == 0) {
+            linesPerPage = Integer.MAX_VALUE;
+        }
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+
+        return ResponseEntity.ok().body(energiaService.buscarMedicoesPorUsuarioPaginadas(minDate, maxDate, pageRequest));
+
+    }
 
     @GetMapping
     public ResponseEntity<Page<EnergiaSimplesResponseDTO>> findAll(Pageable pageable) {

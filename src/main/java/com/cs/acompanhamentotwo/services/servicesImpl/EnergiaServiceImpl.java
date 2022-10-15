@@ -14,6 +14,7 @@ import com.cs.acompanhamentotwo.services.exceptions.MedicaoNaoRealizadaException
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,11 +42,21 @@ public class EnergiaServiceImpl implements EnergiaService {
     private final EnergiaMapper energiaMapper;
 
     @Override
+    public Page<EnergiaResponseDTO> buscarMedicoesPorUsuarioPaginadas(Instant minDate, Instant maxDate, PageRequest pageRequest) {
+
+        Page<Energia> medicoesPaginadas = energiaRepository
+                .buscarMedicoesPorUsuarioPaginadas(minDate, maxDate, pageRequest, obterIdUsuarioAutenticado());
+
+        return medicoesPaginadas.map(energiaMapper::mapEnergiaToEnergiaResponseDto);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<EnergiaSimplesResponseDTO> listarTodasMedicoes(Pageable pageable) {
-
         log.info("Listando todas as medicoes...");
+
         Page<Energia> medicoes = energiaRepository.findAllByUsuarioId(pageable, obterIdUsuarioAutenticado());
+
         return medicoes.map(energiaMapper::mapEnergiaResponseDtoToEnergia);
     }
 
@@ -63,9 +74,7 @@ public class EnergiaServiceImpl implements EnergiaService {
     }
 
     private Long validaMedicao(EnergiaRequestDTO dto, Long medicaoAnterior) {
-
         Long total = obterTotal(medicaoAnterior, dto);
-
         if (medicaoInvalida(medicaoAnterior, dto)) {
             throw new MedicaoNaoRealizadaException("Consumo anterior " + medicaoAnterior + " kWH.");
         } else return total;
@@ -78,11 +87,9 @@ public class EnergiaServiceImpl implements EnergiaService {
     @Transactional(readOnly = true)
     public List<EnergiaSomaDTO> somaMensal() {
         List<Energia> medicoes = energiaRepository.findAll();
-
         List<Long> soma = Collections.singletonList(medicoes.stream()
                 .filter(energia -> mesAtual(energia.getData()))
                 .collect(Collectors.summingLong(Energia::getTotal)));
-
         return soma.stream().map(EnergiaSomaDTO::new).collect(Collectors.toList());
     }
 
@@ -127,7 +134,7 @@ public class EnergiaServiceImpl implements EnergiaService {
         log.info("Obtendo a medicao anterior...");
 
         Optional<Energia> energia = energiaRepository
-				.findFirstByUsuarioIdOrderByDataDesc(id);
+                .findFirstByUsuarioIdOrderByDataDesc(id);
 
         if (ObjectUtils.isEmpty(energia)) {
             return 0L;
