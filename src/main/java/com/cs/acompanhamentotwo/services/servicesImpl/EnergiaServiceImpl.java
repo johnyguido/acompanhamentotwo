@@ -90,6 +90,7 @@ public class EnergiaServiceImpl implements EnergiaService {
     public List<EnergiaSimplesResponseDTO> buscarTodasMedicoesPorUsuarioLogado() {
         return energiaRepository.findAllByUsuarioId(obterIdUsuarioAutenticado())
                 .stream()
+                .sorted((o1, o2) -> o2.getData().compareTo(o1.getData()))
                 .map(energiaMapper::mapEnergiaResponseDtoToEnergia)
                 .collect(Collectors.toList());
     }
