@@ -53,8 +53,7 @@ public class EnergiaServiceImpl implements EnergiaService {
     @Transactional
     public EnergiaResponseDTO gravarLeitura(EnergiaRequestDTO dto) {
 
-        Long id = obterUsuarioAutenticado().getId();
-        Long medicaoAnterior = buscarMedicaoAnterior(id);
+        Long medicaoAnterior = buscarMedicaoAnterior(obterIdUsuarioAutenticado());
 
         log.info("Salvando a medicao...");
         Energia energia = energiaRepository.save(energiaMapper
@@ -97,19 +96,19 @@ public class EnergiaServiceImpl implements EnergiaService {
 
     private boolean mesAtual(Instant data) {
         int mesAtual = Instant
-				.now()
-				.atOffset(ZoneOffset.UTC)
-				.getMonth()
-				.getValue();
+                .now()
+                .atOffset(ZoneOffset.UTC)
+                .getMonth()
+                .getValue();
 
         int mesDaLeitura = data
-				.atZone(ZoneId.systemDefault())
-				.getMonthValue();
+                .atZone(ZoneId.systemDefault())
+                .getMonthValue();
 
         if (mesDaLeitura >= mesAtual) {
             return Boolean.TRUE;
         } else
-			return Boolean.FALSE;
+            return Boolean.FALSE;
     }
 
     private Long obterTotal(Long medicaoAnterior, EnergiaRequestDTO dto) {
