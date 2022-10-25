@@ -4,6 +4,7 @@ import com.cs.acompanhamentotwo.mapper.UsuarioMapper;
 import com.cs.acompanhamentotwo.model.dto.UsuarioDTO;
 import com.cs.acompanhamentotwo.model.entities.Usuario;
 import com.cs.acompanhamentotwo.repositories.UsuarioRepository;
+import com.cs.acompanhamentotwo.services.RegistroAcessoService;
 import com.cs.acompanhamentotwo.services.UsuarioService;
 import com.cs.acompanhamentotwo.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
     private static Logger logger = LoggerFactory.getLogger(UsuarioService.class);
     private final UsuarioRepository usuarioRepository;
+
+    private final RegistroAcessoService registroAcessoService;
 
     private final UsuarioMapper usuarioMapper;
 
@@ -61,7 +64,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
             logger.error("Usuario " + username + " não encontrado.");
             throw new UsernameNotFoundException("E-mail inexistente");
         }
-        logger.info("Usuario encontrado: " + username);
+        log.info("Usuario encontrado: {}", username);
         return usuario;
     }
 }
