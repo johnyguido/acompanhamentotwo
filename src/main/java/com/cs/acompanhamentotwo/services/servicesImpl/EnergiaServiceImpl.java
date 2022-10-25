@@ -87,8 +87,12 @@ public class EnergiaServiceImpl implements EnergiaService {
     @Transactional(readOnly = true)
     public List<EnergiaSomaDTO> somaMensal() {
         List<Energia> medicoes = energiaRepository.findAll();
+
+        List<Energia> med = energiaRepository.findAllByUsuarioIdAndDataLessThanEqualAndDataGreaterThanEqual(obterIdUsuarioAutenticado(), Instant.parse("2022-12-27T00:00:00Z"),Instant.parse("2021-02-03T00:00:00Z") );
+
         List<Long> soma = Collections.singletonList(medicoes.stream()
                 .filter(energia -> mesAtual(energia.getData()))
+                        .filter(energia -> energia.getUsuario().getId().equals(obterIdUsuarioAutenticado()))
                 .collect(Collectors.summingLong(Energia::getTotal)));
         return soma.stream().map(EnergiaSomaDTO::new).collect(Collectors.toList());
     }

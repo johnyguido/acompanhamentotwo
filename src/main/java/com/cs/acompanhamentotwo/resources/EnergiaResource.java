@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -32,12 +33,12 @@ public class EnergiaResource {
             @RequestParam(value = "min", defaultValue = "") String min,
             @RequestParam(value = "max", defaultValue = "") String max,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
+            @RequestParam(value = "linesPerPage", defaultValue = "0") Integer linesPerPage,
             @RequestParam(value = "orderBy", defaultValue = "data") String orderBy,
             @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
 
-        Instant minDate = ("".equals(min)) ? null : Instant.parse(min);
-        Instant maxDate = ("".equals(max)) ? null : Instant.parse(max);
+        Instant minDate = ("".equals(min)) ? Instant.now().minus(30, ChronoUnit.DAYS) : Instant.parse(min);
+        Instant maxDate = ("".equals(max)) ? Instant.now() : Instant.parse(max);
 
         if (linesPerPage == 0) {
             linesPerPage = Integer.MAX_VALUE;

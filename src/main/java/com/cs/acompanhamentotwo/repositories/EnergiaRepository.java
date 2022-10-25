@@ -21,5 +21,7 @@ public interface EnergiaRepository extends JpaRepository<Energia, Long> {
 
 	List<Energia> findAllByUsuarioId(Long id);
 
+	List<Energia> findAllByUsuarioIdAndDataLessThanEqualAndDataGreaterThanEqual(Long id, Instant endDate, Instant startDate);
+
 	Page<Energia> findAllByUsuarioId(Pageable pageable,Long Id);
 }

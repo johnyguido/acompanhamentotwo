@@ -13,6 +13,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class EnergiaResponseDTO  {
 
+    private Long id;
     private Long leituraInicial;
     private Long leituraFinal;
     private Long total;
