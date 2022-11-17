@@ -1,4 +1,4 @@
-package com.cs.acompanhamentotwo.services.servicesImpl;
+package com.cs.acompanhamentotwo.services.impl;
 
 import com.cs.acompanhamentotwo.mapper.RegistroAcessoMapper;
 import com.cs.acompanhamentotwo.model.dto.RegistroAcessoResponseDTO;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -36,9 +35,9 @@ public class RegistroAcessoServiceImpl implements RegistroAcessoService {
 
        Optional<RegistroAcessoUsuario> ultimoAcesso = registroAcessoRepository.findByUsuarioIdAndIsUltimoAcessoIsTrue(idUsuario);
 
-       RegistroAcessoUsuario registroAcessoUsuario = new RegistroAcessoUsuario();
+       RegistroAcessoUsuario registroAcessoUsuario;
 
-       if (ObjectUtils.isEmpty( ultimoAcesso)){
+       if (ultimoAcesso.isEmpty()){
            registroAcessoUsuario = registroAcessoRepository
                    .save(RegistroAcessoUsuario.builder().usuario(usuario).build());
            return registroAcessoMapper.mapRegistroAcessoToDTO(registroAcessoUsuario);

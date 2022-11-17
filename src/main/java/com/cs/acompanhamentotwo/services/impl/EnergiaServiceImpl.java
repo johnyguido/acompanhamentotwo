@@ -1,4 +1,4 @@
-package com.cs.acompanhamentotwo.services.servicesImpl;
+package com.cs.acompanhamentotwo.services.impl;
 
 import com.cs.acompanhamentotwo.mapper.EnergiaMapper;
 import com.cs.acompanhamentotwo.model.dto.EnergiaRequestDTO;
